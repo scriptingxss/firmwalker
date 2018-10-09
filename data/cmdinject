@@ -5,3 +5,4 @@ os.execute
 os.system
 subprocess.call
 eval
+cmd
