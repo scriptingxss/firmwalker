@@ -8,3 +8,5 @@ busybox
 telnet
 telnetd
 openssl
+ftpget
+ftpput
