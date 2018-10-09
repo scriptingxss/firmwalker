@@ -1,0 +1,6 @@
+system
+exec
+ShellExecute
+os.execute
+os.system
+subprocess.call
