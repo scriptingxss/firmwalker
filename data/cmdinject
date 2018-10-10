@@ -1,5 +1,6 @@
 system
 exec
+execve
 ShellExecute
 os.execute
 os.system
