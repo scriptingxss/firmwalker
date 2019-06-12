@@ -1,0 +1,13 @@
+strcpy
+strcat
+strncat
+sprintf
+vsprintf
+strlen
+memcpy
+memcmp
+memset
+fopen
+gets
+getwd
+scanf
