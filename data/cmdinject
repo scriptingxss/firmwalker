@@ -1,5 +1,7 @@
 system
 exec
+execl
+popen
 execve
 ShellExecute
 os.execute
