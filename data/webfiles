@@ -3,4 +3,5 @@
 *.xml
 *.php
 *.js
+*.json
 *.cgi
