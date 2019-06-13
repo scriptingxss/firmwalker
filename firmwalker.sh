@@ -11,7 +11,7 @@ function usage {
 }
 
 function msg {
-    echo "$1" | tee -a $FILE
+    echo "$1" | tee -a $FILE $WEBCHECKS
 }
 
 function getArray {
@@ -23,7 +23,7 @@ function getArray {
 }
 
 # Check for arguments
-if [[ $# -gt 2 || $# -lt 1 ]]; then
+if [[ $# -gt 3 || $# -lt 1 ]]; then
     usage
 fi
 
@@ -34,11 +34,18 @@ if [[ $# -eq 2 ]]; then
 else
     FILE="firmwalker.txt"
 fi
+if [[ $# -eq 3 ]]; then
+	WEBCHECKS=$3
+else
+	WEBCHECKS="firmwalkerappsec.txt"
+fi
 # Remove previous file if it exists, is a file and doesn't point somewhere
 if [[ -e "$FILE" && ! -h "$FILE" && -f "$FILE" ]]; then
     rm -f $FILE
 fi
-
+if [[ -e "$WEBCHECKS" && ! -h "$WEBCHECKS" && -f "$WEBCHECKS" ]]; then
+    rm -f $WEBCHECKS
+fi
 # Perform searches
 msg "***Firmware Directory***"
 msg $FIRMDIR
@@ -102,6 +109,7 @@ do
     find $FIRMDIR -name $sshfile | cut -c${#FIRMDIR}- | tee -a $FILE
     msg ""
 done
+
 msg ""
 msg "***Search for files***"
 getArray "data/files"
@@ -112,6 +120,7 @@ do
     find $FIRMDIR -name $file | cut -c${#FIRMDIR}- | tee -a $FILE
     msg ""
 done
+
 msg ""
 msg "***Search for database related files***"
 getArray "data/dbfiles"
@@ -122,6 +131,7 @@ do
     find $FIRMDIR -name $dbfile | cut -c${#FIRMDIR}- | tee -a $FILE
     msg ""
 done
+
 msg ""
 msg "***Search for shell scripts***"
 msg "##################################### shell scripts"
@@ -138,8 +148,12 @@ for pattern in "${patterns[@]}"
 do
     msg "-------------------- $pattern --------------------"
     grep -lsirnw $FIRMDIR -e "$pattern" | cut -c${#FIRMDIR}- | tee -a $FILE
+    #For line numbers of each instance, uncomment below.
+    msg "-------------------- $pattern pattern with line numbers----"
+    grep -sirnow $FIRMDIR -e "$pattern" | uniq | cut -c${#FIRMDIR}- | tee -a $WEBCHECKS
     msg ""
 done
+
 msg ""
 msg "***Search for web servers***"
 msg "##################################### search for web servers"
@@ -151,6 +165,35 @@ do
     find $FIRMDIR -name "$webserver" | cut -c${#FIRMDIR}- | tee -a $FILE
     msg ""
 done
+
+msg "***Search for command injection functions***"
+msg "##################################### Command injection functions"
+getArray "data/cmdinject"
+cmdinject=("${array[@]}")
+for cmdinject in ${cmdinject[@]}
+do
+    msg "##################################### $cmdinject"
+    grep -lsirnw $FIRMDIR -e "$cmdinject" | sort | uniq | cut -c${#FIRMDIR}- | tee -a $FILE
+    #For line numbers of each instance, uncomment below.
+    msg "##################################### $cmdinject function with line numbers"
+    grep -sirnow $FIRMDIR -e "$cmdinject" | sort | uniq | cut -c${#FIRMDIR}- | tee -a $WEBCHECKS
+    msg ""
+done
+
+msg "***Search for banned C functions***"
+#https://github.com/intel/safestringlib/wiki/SDL-List-of-Banned-Functions
+msg "##################################### Banned C functions"
+getArray "data/bannedfunctions"
+bannedfunctions=("${array[@]}")
+for bannedfunctions in "${bannedfunctions[@]}"
+do
+	msg "##################################### $bannedfunctions"
+	grep -lsirnw $FIRMDIR -e "$bannedfunctions" | sort | uniq | cut -c${#FIRMDIR}- | tee -a $FILE
+	#For line numbers of each instance, uncomment below.
+	grep -sirnow $FIRMDIR -e "$bannedfunctions" | sort | uniq | cut -c${#FIRMDIR}- | tee -a $WEBCHECKS
+	msg ""
+done
+
 msg ""
 msg "***Search for important binaries***"
 msg "##################################### important binaries"
@@ -164,6 +207,18 @@ do
 done
 
 msg ""
+msg "***Search for webfiles***"
+msg "##################################### webfiles"
+getArray "data/webfiles"
+webfiles=("${array[@]}")
+for webfiles in "${webfiles[@]}"
+do
+    msg "##################################### $webfiles"
+    find $FIRMDIR -name "$webfiles" | cut -c${#FIRMDIR}- | tee -a $WEBCHECKS
+    msg ""
+done
+
+msg ""
 msg "***Search for ip addresses***"
 msg "##################################### ip addresses"
 grep -sRIEho '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' --exclude='console' $FIRMDIR | sort | uniq | tee -a $FILE
@@ -171,7 +226,7 @@ grep -sRIEho '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' --exclude='console
 msg ""
 msg "***Search for urls***"
 msg "##################################### urls"
-grep -sRIEoh '(http|https)://[^/"]+' --exclude='console' $FIRMDIR | sort | uniq | tee -a $FILE
+grep -sRIEoh '(http|https)://[^/"]+' --exclude='console' $FIRMDIR | sort | uniq | tee -a $FILE $WEBCHECKS
 
 msg ""
 msg "***Search for emails***"
