@@ -10,9 +10,11 @@ It will search through the extracted or mounted firmware file system for things 
 * search for configuration files
 * look for script files
 * search for other .bin files
-* look for keywords such as admin, password, remote, etc.
+* look for keywords such as admin, password, remote, AWS keys, etc.
 * search for common web servers used on IoT devices
 * search for common binaries such as ssh, tftp, dropbear, etc.
+* search for banned c functions 
+* search for common command injection vulnerable functions
 * search for URLs, email addresses and IP addresses
 * Experimental support for making calls to the Shodan API using the Shodan CLI
 
@@ -21,6 +23,7 @@ It will search through the extracted or mounted firmware file system for things 
 * `./firmwalker {path to root file system} {path for firmwalker.txt}`
 * Example: `./firmwalker linksys/fmk/rootfs ../firmwalker.txt`
 * A file `firmwalker.txt` will be created in the same directory as the script file unless you specify a different filename as the second argument
+* A file `firmwalkerappsec.txt` will be created in the same directory as the script file for application security related results unless you specify a different filename as the third argument
 * Do not put the firmwalker.sh file inside the directory to be searched, this will cause the script to search itself and the file it is creating
 * `chmod 0700 firmwalker.sh`
 
@@ -34,6 +37,7 @@ It will search through the extracted or mounted firmware file system for things 
 ### Script created by Craig Smith and expanded by:
 * Athanasios Kostopoulos
 * misterch0c
+* [Aaron Guzman @scriptingxss](https://twitter.com/scriptingxss)
 
 ### Links
 * https://craigsmith.net
