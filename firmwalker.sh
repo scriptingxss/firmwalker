@@ -5,8 +5,9 @@ set -u
 function usage {
 	echo "Usage:"
 	echo "$0 {path to extracted file system of firmware}\
- {optional: name of the file to store results - defaults to firmwalker.txt}"
-	echo "Example: ./$0 linksys/fmk/rootfs/"
+ {optional: name of the file to store results - defaults to firmwalker.txt}\
+         {optional: name of the file to store appsec related results - defaults to firmwalkerappsec.txt}"
+        echo "Example: ./$0 linksys/fmk/rootfs/"
 	exit 1
 }
 
