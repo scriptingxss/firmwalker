@@ -1,3 +1,6 @@
 *.db
 *.sqlite
 *.sqlite3
+*.sqlitedb
+*.store
+*.sql
